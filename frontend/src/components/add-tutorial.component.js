@@ -61,7 +61,6 @@ export default class AddTutorial extends Component {
       description: "",
       published: false,
 
-      submitted: false
     });
   }
 

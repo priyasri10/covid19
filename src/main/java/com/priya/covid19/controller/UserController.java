@@ -1,7 +1,7 @@
 package com.priya.covid19.controller;
 
-import com.priya.covid19.model.Patient;
-import com.priya.covid19.repository.PatientRepository;
+import com.priya.covid19.model.User;
+import com.priya.covid19.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
@@ -16,11 +16,10 @@ import java.util.*;
 @CrossOrigin(origins = "http://localhost:8081")
 @RestController
 @RequestMapping("/api")
-public class PatientController {
+public class UserController {
 
     @Autowired
-    PatientRepository patientRepository;
-
+    UserRepository userRepository;
 
     private Sort.Direction getSortDirection(String direction) {
         if (direction.equals("asc")) {
@@ -32,11 +31,11 @@ public class PatientController {
         return Sort.Direction.ASC;
     }
 
-    @GetMapping("/patients")
-    public ResponseEntity<Map<String, Object>> getAllPatientsPage(
+    @GetMapping("/users")
+    public ResponseEntity<Map<String, Object>> getAllUsersPage(
             @RequestParam(required = false) String name,
             @RequestParam(defaultValue = "0") int page,
-            @RequestParam(defaultValue = "10") int size,
+            @RequestParam(defaultValue = "3") int size,
             @RequestParam(defaultValue = "id,desc") String[] sort) {
 
         try {
@@ -54,84 +53,81 @@ public class PatientController {
                 orders.add(new Sort.Order(getSortDirection(sort[1]), sort[0]));
             }
 
-            List<Patient> patients = new ArrayList<Patient>();
+            List<User> users = new ArrayList<User>();
             Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
 
-            Page<Patient> pagePatients;
+            Page<User> pageUsers;
             if (name == null)
-                pagePatients = patientRepository.findAll(pagingSort);
+                pageUsers = userRepository.findAll(pagingSort);
             else
-                pagePatients = patientRepository.findByNameContaining(name, pagingSort);
+                pageUsers = userRepository.findByNameContaining(name, pagingSort);
 
-            patients = pagePatients.getContent();
+            users = pageUsers.getContent();
 
-            if (patients.isEmpty()) {
+            if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
             }
 
             Map<String, Object> response = new HashMap<>();
-            response.put("patients", patients);
-            response.put("currentPage", pagePatients.getNumber());
-            response.put("totalItems", pagePatients.getTotalElements());
-            response.put("totalPages", pagePatients.getTotalPages());
+            response.put("users", users);
+            response.put("currentPage", pageUsers.getNumber());
+            response.put("totalItems", pageUsers.getTotalElements());
+            response.put("totalPages", pageUsers.getTotalPages());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
         }
     }
-
-    @PostMapping("/patients")
-    public ResponseEntity<Patient> createDoctor(@RequestBody Patient patient) {
+    @PostMapping("/users")
+    public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
 
-            Patient _patient = patientRepository.save(new Patient(patient.getName(),patient.getAge(),patient.getBprate()));
-            return new ResponseEntity<>(_patient, HttpStatus.CREATED);
+            User _user = userRepository.save(new User(user.getName(), user.getAge(), user.getEmail(), null));
+            return new ResponseEntity<>(_user, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         }
     }
 
-    @GetMapping("/patients/{id}")
-    public ResponseEntity<Patient> getPatientsById(@PathVariable("id") long id) {
-        Optional<Patient> patientData = patientRepository.findById(id);
+    @GetMapping("/users/{id}")
+    public ResponseEntity<User> getUsersById(@PathVariable("id") long id) {
+        Optional<User> userData = userRepository.findById(id);
 
-        if (patientData.isPresent()) {
-            return new ResponseEntity<>(patientData.get(), HttpStatus.OK);
+        if (userData.isPresent()) {
+            return new ResponseEntity<>(userData.get(), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @PutMapping("/patients/{id}")
-    public ResponseEntity<Patient> updatePatient(@PathVariable("id") long id, @RequestBody Patient patient) {
-        Optional<Patient> patientData = patientRepository.findById(id);
+    @PutMapping("/users/{id}")
+    public ResponseEntity<User> updateUser(@PathVariable("id") long id, @RequestBody User user) {
+        Optional<User> userData = userRepository.findById(id);
 
-        if (patientData.isPresent()) {
-            Patient _patient = patientData.get();
-            _patient.setName(patient.getName());
-            _patient.setAge(patient.getAge());
-            _patient.setBprate(patient.getBprate());
-            return new ResponseEntity<>(patientRepository.save(_patient), HttpStatus.OK);
+        if (userData.isPresent()) {
+            User _user = userData.get();
+            _user.setName(user.getName());
+            return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
         }
     }
 
-    @DeleteMapping("/patients/{id}")
-    public ResponseEntity<HttpStatus> deleteTutorial(@PathVariable("id") long id) {
+    @DeleteMapping("/users/{id}")
+    public ResponseEntity<HttpStatus> deleteUser(@PathVariable("id") long id) {
         try {
-            patientRepository.deleteById(id);
+            userRepository.deleteById(id);
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
     }
 
-    @DeleteMapping("/patients")
-    public ResponseEntity<HttpStatus> deleteAllTutorials() {
+    @DeleteMapping("/users")
+    public ResponseEntity<HttpStatus> deleteAllUsers() {
         try {
-            patientRepository.deleteAll();
+            userRepository.deleteAll();
             return new ResponseEntity<>(HttpStatus.NO_CONTENT);
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);

@@ -1,6 +1,10 @@
 package com.priya.covid19.model;
 
 import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import javax.validation.constraints.NotNull;
+import org.hibernate.annotations.OnDelete;
+import org.hibernate.annotations.OnDeleteAction;
 
 @Entity
 @Table(name = "patients")
@@ -18,9 +22,30 @@ public class Patient {
     @Column(name = "bprate")
     private int bprate;
 
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
+    @JoinColumn(name = "doctor_id", nullable = true)
+    @OnDelete(action = OnDeleteAction.NO_ACTION)
+    @JsonIgnore
+    private Doctor doctor;
+
+    public Patient(String name, int age, int bprate, Doctor doctor) {
+        this.name = name;
+        this.age = age;
+        this.bprate = bprate;
+        this.doctor = doctor;
+    }
+
+    public Doctor getDoctor() {
+        return doctor;
+    }
+
     public Patient()
     {
 
+    }
+
+    public void setDoctor(Doctor doctor) {
+        this.doctor = doctor;
     }
 
     public Patient(String name, int age, int bprate)
