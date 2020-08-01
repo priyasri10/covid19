@@ -1,5 +1,6 @@
 package com.priya.covid19.controller;
 
+import com.priya.covid19.SendGridEmailer;
 import com.priya.covid19.model.Patient;
 import com.priya.covid19.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -82,7 +83,7 @@ public class PatientController {
     }
 
     @PostMapping("/patients")
-    public ResponseEntity<Patient> createDoctor(@RequestBody Patient patient) {
+    public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         try {
 
             Patient _patient = patientRepository.save(new Patient(patient.getName(),patient.getAge(),patient.getBprate()));
@@ -112,6 +113,11 @@ public class PatientController {
             _patient.setName(patient.getName());
             _patient.setAge(patient.getAge());
             _patient.setBprate(patient.getBprate());
+            try {
+                SendGridEmailer.send("test@example.com", "kumarsiva0707@gmail.com", "subject", "content ");
+            }catch (Exception e) {
+                System.out.println(e.fillInStackTrace());
+            }
             return new ResponseEntity<>(patientRepository.save(_patient), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
@@ -136,7 +142,6 @@ public class PatientController {
         } catch (Exception e) {
             return new ResponseEntity<>(HttpStatus.EXPECTATION_FAILED);
         }
-
     }
 
 }
