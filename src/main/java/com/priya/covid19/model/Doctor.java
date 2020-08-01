@@ -1,6 +1,9 @@
 package com.priya.covid19.model;
 
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+
 import javax.persistence.*;
+import java.util.Set;
 
 @Entity
 @Table(name = "doctors")
@@ -12,14 +15,32 @@ public class Doctor {
     @Column(name = "name")
     private String name;
 
-    public Doctor() {
+    @Column(name = "email")
+    private String email;
 
+    public String getEmail() {
+        return email;
+    }
+
+    public void setEmail(String email) {
+        this.email = email;
+    }
+
+    @OneToMany(mappedBy = "doctor", cascade = CascadeType.ALL)
+//    @OneToMany(cascade = CascadeType.ALL)
+    @JsonManagedReference
+    private Set<Patient> patients;
+
+    public Doctor() {
     }
 
     public Doctor(String name) {
         this.name = name;
     }
 
+    public Doctor(long id) {
+        this.id = id;
+    }
 
     public long getId() {
         return id;
@@ -37,9 +58,20 @@ public class Doctor {
         this.name = name;
     }
 
-    @Override
-    public String toString() {
-        return "Doctor [ id=" + id + ", name=" + name + "]";
+    public Set<Patient> getPatients() {
+        return patients;
+    }
+
+    public void setPatients(Set<Patient> patients) {
+        this.patients = patients;
+    }
+
+    @java.lang.Override
+    public java.lang.String toString() {
+        return "Doctor{" +
+                "id=" + id +
+                ", name='" + name + '\'' +
+                '}';
     }
 
 }

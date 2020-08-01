@@ -1,7 +1,9 @@
 package com.priya.covid19.controller;
 
 import com.priya.covid19.SendGridEmailer;
+import com.priya.covid19.model.Doctor;
 import com.priya.covid19.model.Patient;
+import com.priya.covid19.repository.DoctorRepository;
 import com.priya.covid19.repository.PatientRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
@@ -18,6 +20,9 @@ import java.util.*;
 @RestController
 @RequestMapping("/api")
 public class PatientController {
+
+    @Autowired
+    DoctorRepository doctorRepository;
 
     @Autowired
     PatientRepository patientRepository;
@@ -86,9 +91,12 @@ public class PatientController {
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         try {
 
-            Patient _patient = patientRepository.save(new Patient(patient.getName(),patient.getAge(),patient.getBprate()));
+            Doctor doctor = doctorRepository.findById(patient.getDoctor().getId()).orElse(null);
+            Patient daoPatient = new Patient(patient.getName(),patient.getAge(),patient.getBprate(), doctor);
+            Patient _patient = patientRepository.save(daoPatient);
             return new ResponseEntity<>(_patient, HttpStatus.CREATED);
         } catch (Exception e) {
+            e.printStackTrace();
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
         }
     }
@@ -114,9 +122,19 @@ public class PatientController {
             _patient.setAge(patient.getAge());
             _patient.setBprate(patient.getBprate());
             try {
-                SendGridEmailer.send("test@example.com", "kumarsiva0707@gmail.com", "subject", "content ");
+                if (_patient.getBprate() > 120 || _patient.getBprate() < 80) {
+                    String email = "priyasrir2021@srishakthi.ac.in";
+                    String subject = "Alert! Check Patient "+_patient.getName();
+                    String content = " Hi, <br> Check <em>"+_patient.getName() +"</em> <br> " + _patient.toString();
+                    if(_patient.getDoctor() != null && _patient.getDoctor().getEmail() != null) {
+                        Doctor doctor = _patient.getDoctor();
+                        email = doctor.getEmail();
+
+                    }
+                    SendGridEmailer.send("test@example.com", email, subject, content );
+                }
             }catch (Exception e) {
-                System.out.println(e.fillInStackTrace());
+                e.printStackTrace();
             }
             return new ResponseEntity<>(patientRepository.save(_patient), HttpStatus.OK);
         } else {

@@ -1,5 +1,6 @@
 import React, { Component } from "react";
 import PatientDataService from "../services/patient.service";
+import Doctor from "./auto-complete.component";
 
 export default class AddPatient extends Component {
   constructor(props) {
@@ -14,7 +15,8 @@ export default class AddPatient extends Component {
       id: null,
       name: "",
       age: "",
-      bprate: ""
+      bprate: "",
+      doctor_id: ""
     };
   }
 
@@ -35,12 +37,18 @@ export default class AddPatient extends Component {
       bprate: e.target.value
     });
   }
+    onChangeDoctorId(e) {
+        this.setState({
+            doctor_id: e.target.value
+        });
+    }
 
   savePatient() {
     var data = {
       name: this.state.name,
       age: this.state.age,
-      bprate: this.state.bprate
+      bprate: this.state.bprate,
+      doctor_id: this.state.doctor_id
     };
 
    PatientDataService.create(data)
@@ -49,7 +57,8 @@ export default class AddPatient extends Component {
           id: response.data.id,
           name: response.data.name,
           age: response.data.age,
-          bprate: response.data.email,
+          bprate: response.data.bprate,
+            doctor_id: response.data.doctor_id,
 
           submitted: true
 
@@ -63,10 +72,11 @@ export default class AddPatient extends Component {
 
   newPatient() {
     this.setState({
-      id: null,
-      name: "",
-      age: "",
-      bprate: "",
+        id: null,
+        name: "",
+        age: "",
+        bprate: "",
+        doctor_id: "",
 
       submitted: false
     });
@@ -122,6 +132,11 @@ export default class AddPatient extends Component {
                   name="bprate"
               />
             </div>
+
+            <div className="form-group">
+              <label htmlFor="doctor_id">Doctor</label>
+            </div>
+
 
 
             <button onClick={this.savePatient} className="btn btn-success">

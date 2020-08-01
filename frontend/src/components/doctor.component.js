@@ -36,20 +36,6 @@ export default class Doctor extends Component {
     });
   }
 
-  getDl(id) {
-    DoctorDataService.get(id)
-      .then(response => {
-        this.setState({
-          currentDoctor: response.data
-        });
-        console.log(response.data);
-      })
-      .catch(e => {
-        console.log(e);
-      });
-  }
-
-
   getDoctor(id) {
     DoctorDataService.get(id)
         .then(response => {

@@ -11,10 +11,10 @@ public class SendGridEmailer {
     public static void send(String f, String t, String s, String c) throws IOException {
 
         Email from = new Email("priyasrir2021@srishakthi.ac.in");
-        Email to = new Email("kumarsiva0707@gmail.com"); // use your own email address here
+        Email to = new Email(t); // use your own email address here
 
-        String subject = "Sending with Twilio SendGrid is Fun";
-        Content content = new Content("text/html", "and <em>easy</em> to do anywhere with <strong>Java</strong>");
+        String subject = s;
+        Content content = new Content("text/html", c);
 
         Mail mail = new Mail(from, subject, to, content);
 
