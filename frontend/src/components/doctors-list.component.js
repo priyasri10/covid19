@@ -223,9 +223,19 @@ export default class DoctorsList extends Component {
           ) : (
             <div>
               <br />
+              <Link
+                  to={"/doctors/add"}
+                  className="badge badge-warning"
+                  onClick={this.addDoctor}
+              >
+                Add Doctor
+              </Link>
+
+              <br />
               <p>Please click on a Doctor...</p>
             </div>
-          )}
+          )
+          }
         </div>
       </div>
     );

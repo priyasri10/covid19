@@ -5,12 +5,14 @@ export default class AddDoctor extends Component {
   constructor(props) {
     super(props);
     this.onChangeName = this.onChangeName.bind(this);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
     this.saveDoctor = this.saveDoctor.bind(this);
     this.newDoctor = this.newDoctor.bind(this);
 
     this.state = {
       id: null,
-      name: ""
+      name: "",
+      email: ""
     };
   }
 
@@ -19,17 +21,25 @@ export default class AddDoctor extends Component {
       name: e.target.value
     });
   }
+  onChangeEmail(e) {
+    this.setState({
+      email: e.target.value
+    });
+  }
 
   saveDoctor() {
     var data = {
-      name: this.state.name
+      name: this.state.name,
+      email: this.state.email
     };
 
    DoctorDataService.create(data)
       .then(response => {
         this.setState({
           id: response.data.id,
-          name: response.data.name
+          name: response.data.name,
+          email: response.data.email,
+          submitted: true
         });
         console.log(response.data);
       })
@@ -41,7 +51,8 @@ export default class AddDoctor extends Component {
   newDoctor() {
     this.setState({
       id: null,
-      name: ""
+      name: "",
+      email: ""
     });
   }
 
@@ -68,6 +79,18 @@ export default class AddDoctor extends Component {
                 onChange={this.onChangeName}
                 name="name"
               />
+            </div>
+              <div className="form-group">
+                <label htmlFor="email">Email</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="email"
+                    required
+                    value={this.state.email}
+                    onChange={this.onChangeEmail}
+                    name="email"
+                />
             </div>
 
             <button onClick={this.saveDoctor} className="btn btn-success">

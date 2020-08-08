@@ -1,11 +1,11 @@
 import React, { Component } from "react";
 import DoctorDataService from "../services/doctor.service";
-import PatientDataService from "../services/patient.service";
 
 export default class Doctor extends Component {
   constructor(props) {
     super(props);
     this.onChangeName = this.onChangeName.bind(this);
+    this.onChangeEmail = this.onChangeEmail.bind(this);
     this.getDoctor = this.getDoctor.bind(this);
     this.updateDoctor = this.updateDoctor.bind(this);
     this.deleteDoctor = this.deleteDoctor.bind(this);
@@ -13,7 +13,8 @@ export default class Doctor extends Component {
     this.state = {
       currentDoctor: {
         id: null,
-        name: ""
+        name: "",
+        email: ""
       },
       message: ""
     };
@@ -23,14 +24,27 @@ export default class Doctor extends Component {
     this.getDoctor(this.props.match.params.id);
   }
 
+
   onChangeName(e) {
     const name = e.target.value;
-
     this.setState(function(prevState) {
+      //this.name = name;
       return {
-        currentName: {
-          ...prevState.currentName,
+        currentDoctor: {
+          ...prevState.currentDoctor,
           name: name
+        }
+      };
+    });
+  }
+  onChangeEmail(e) {
+    const email = e.target.value;
+    this.setState(function(prevState) {
+      //this.name = name;
+      return {
+        currentDoctor: {
+          ...prevState.currentDoctor,
+          email: email
         }
       };
     });
@@ -95,6 +109,16 @@ export default class Doctor extends Component {
                   onChange={this.onChangeName}
                 />
               </div>
+              <div className="form-group">
+                <label htmlFor="name">Email</label>
+                <input
+                    type="text"
+                    className="form-control"
+                    id="email"
+                    value={currentDoctor.email}
+                    onChange={this.onChangeEmail}
+                />
+              </div>
             </form>
 
             <button
@@ -107,6 +131,7 @@ export default class Doctor extends Component {
             <button
               type="submit"
               className={"badge badge-success"}
+              onClick={this.updateDoctor}
             >
               Update
             </button>

@@ -27,7 +27,7 @@ public class Patient {
     private Long doctorId;
 
     @JsonProperty("doctor_id")
-    public void setDoctorId(Long doctorId) {
+    public void setDoctorId(long doctorId) {
         this.doctor = new Doctor(doctorId);
     }
 

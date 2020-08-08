@@ -90,8 +90,12 @@ public class PatientController {
     @PostMapping("/patients")
     public ResponseEntity<Patient> createPatient(@RequestBody Patient patient) {
         try {
+            Doctor doctor;
+            if(patient.getDoctor()==null)
+                doctor = new Doctor();
+            else
+                doctor = doctorRepository.findById(patient.getDoctor().getId()).orElse(null);
 
-            Doctor doctor = doctorRepository.findById(patient.getDoctor().getId()).orElse(null);
             Patient daoPatient = new Patient(patient.getName(),patient.getAge(),patient.getBprate(), doctor);
             Patient _patient = patientRepository.save(daoPatient);
             return new ResponseEntity<>(_patient, HttpStatus.CREATED);

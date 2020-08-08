@@ -49,6 +49,7 @@ class App extends Component {
               <Route exact path={[ "/patients"]} component={PatientsList} />
               <Route exact path={[ "/users"]} component={UsersList} />
               <Route exact path={[ "/patients/add"]} component={AddPatient} />
+              <Route exact path={[ "/doctors/add"]} component={AddDoctor} />
               <Route path="/doctors/:id" component={Doctor} />
               <Route path="/patients/:id" component={Patient} />
               <Route path="/users/:id" component={User} />
