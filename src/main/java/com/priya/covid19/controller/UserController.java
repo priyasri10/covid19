@@ -57,12 +57,12 @@ public class UserController {
             Pageable pagingSort = PageRequest.of(page, size, Sort.by(orders));
 
             Page<User> pageUsers;
-            if (name == null)
-                pageUsers = userRepository.findAll(pagingSort);
-            else
-                pageUsers = userRepository.findByNameContaining(name, pagingSort);
+//            if (name == null)
+//                pageUsers = userRepository.findAll(pagingSort);
+//            else
+//                pageUsers = userRepository.findByNameContaining(name, pagingSort);
 
-            users = pageUsers.getContent();
+//            users = pageUsers.getContent();
 
             if (users.isEmpty()) {
                 return new ResponseEntity<>(HttpStatus.NO_CONTENT);
@@ -70,9 +70,9 @@ public class UserController {
 
             Map<String, Object> response = new HashMap<>();
             response.put("users", users);
-            response.put("currentPage", pageUsers.getNumber());
-            response.put("totalItems", pageUsers.getTotalElements());
-            response.put("totalPages", pageUsers.getTotalPages());
+//            response.put("currentPage", pageUsers.getNumber());
+//            response.put("totalItems", pageUsers.getTotalElements());
+//            response.put("totalPages", pageUsers.getTotalPages());
 
             return new ResponseEntity<>(response, HttpStatus.OK);
         } catch (Exception e) {
@@ -83,7 +83,7 @@ public class UserController {
     public ResponseEntity<User> createUser(@RequestBody User user) {
         try {
 
-            User _user = userRepository.save(new User(user.getName(), user.getAge(), user.getEmail(), null));
+            User _user = userRepository.save(new User(user.getUsername(), user.getEmail(), user.getPassword()));
             return new ResponseEntity<>(_user, HttpStatus.CREATED);
         } catch (Exception e) {
             return new ResponseEntity<>(null, HttpStatus.EXPECTATION_FAILED);
@@ -107,7 +107,7 @@ public class UserController {
 
         if (userData.isPresent()) {
             User _user = userData.get();
-            _user.setName(user.getName());
+            _user.setUsername(user.getUsername());
             return new ResponseEntity<>(userRepository.save(_user), HttpStatus.OK);
         } else {
             return new ResponseEntity<>(HttpStatus.NOT_FOUND);
